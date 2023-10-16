@@ -6,14 +6,15 @@ import matplotlib.colors as colours
 
 
 def create_matrix(r, s):
-    box = (r + s) * 2
-    matrix = numpy.zeros((box, box))
-    matrix[r + s][r + s] = 1
+    R_SQUARED = r ** 2
+    CENTRE = r + s
+    BOX = CENTRE * 2 + 1
 
-    for x in range(box):
-        for y in range(box):
-            if (x - r - s) ** 2 + (y - r - s) ** 2 >= r ** 2:
-                matrix[x][y] = -1
+    matrix = numpy.zeros((BOX, BOX))
+    matrix[CENTRE][CENTRE] = 1
+
+    y, x = numpy.ogrid[-CENTRE:BOX - CENTRE, -CENTRE:BOX - CENTRE]
+    matrix[x ** 2 + y ** 2 >= R_SQUARED] = -1
 
     return matrix
 
