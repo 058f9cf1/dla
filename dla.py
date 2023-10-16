@@ -12,7 +12,7 @@ def create_matrix(r, s):
         for y in range(box):
             if (x - r - s) ** 2 + (y - r - s) ** 2 >= r ** 2:
                 matrix[x][y] = -1
-                
+
     return matrix
 
 
@@ -24,15 +24,14 @@ def random_particle(r, s):
 
 
 def walk(x, y):
-	rand = numpy.random.choice(['N', 'E', 'S', 'W'])
-	if(rand == 'N'):
+	rand = numpy.random.random()
+	if(rand < 0.25):
 		return x, y - 1
-	elif(rand == 'E'):
+	elif(rand < 0.5):
 		return x + 1, y
-	elif(rand == 'S'):
+	elif(rand < 0.75):
 		return x, y + 1
-	elif(rand == 'W'):
-		return x - 1, y
+	return x - 1, y
 
 
 def run(m, r, s):
@@ -52,10 +51,10 @@ def run(m, r, s):
 				x, y = walk(x, y)
 	return m
 
-
-radius = 59
-space = 10
-matrix = create_matrix(radius, space)
-matrix = run(matrix, radius, space)
-plt.matshow(matrix, cmap = colours.ListedColormap(['white', 'white', 'black']))
-#plt.show()
+if __name__ == "__main__":
+	radius = 199
+	space = 1
+	matrix = create_matrix(radius, space)
+	matrix = run(matrix, radius, space)
+	plt.matshow(matrix, cmap = colours.ListedColormap(['white', 'white', 'black']))
+	plt.show()
