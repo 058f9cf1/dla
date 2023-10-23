@@ -4,16 +4,17 @@ import matplotlib.colors as colours
 
 
 def create_matrix(r, s):
-    box = (r + s) * 2
-    matrix = numpy.zeros((box, box))
-    matrix[r + s][r + s] = 1
-
-    for x in range(box):
-        for y in range(box):
-            if (x - r - s) ** 2 + (y - r - s) ** 2 >= r ** 2:
-                matrix[x][y] = -1
-
-    return matrix
+	R_SQUARED = r ** 2
+	R_PLUS_S = r + s
+	BOX = R_PLUS_S * 2 + 1
+	
+	matrix = numpy.zeros((BOX, BOX))
+	matrix[R_PLUS_S][R_PLUS_S] = 1
+	
+	y, x = numpy.ogrid[-R_PLUS_S:BOX - R_PLUS_S, -R_PLUS_S:BOX - R_PLUS_S]
+	matrix[x ** 2 + y ** 2 >= R_SQUARED] = -1
+	
+	return matrix
 
 
 def random_particle(r, s):
