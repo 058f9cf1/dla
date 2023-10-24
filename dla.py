@@ -22,6 +22,7 @@ def random_particle(r, p):
 	theta = 2 * numpy.pi * numpy.random.random()
 	x = int((r - 0.5) * (numpy.cos(theta) + 1)) + p + 1
 	y = int((r - 0.5) * (numpy.sin(theta) + 1)) + p + 1
+
 	return x, y
 
 
@@ -33,6 +34,7 @@ def walk(x, y):
 		return x + 1, y#Right
 	elif(rand < 0.75):
 		return x, y + 1#Down
+
 	return x - 1, y#Left
 
 
@@ -51,12 +53,19 @@ def run(m, r, p):
 					complete = True
 			else:
 				x, y = walk(x, y)
+
 	return m
+
+
+def generate(r, p):
+	m = create_matrix(r, p)
+
+	return run(m, r, p)
+
 
 if __name__ == "__main__":
 	radius = 100
-	padding = 1 
-	matrix = create_matrix(radius, padding)
-	matrix = run(matrix, radius, padding)
+	padding = 5
+	matrix = generate(radius, padding)
 	plt.matshow(matrix, cmap = colours(['white', 'white', 'black']))
 	plt.show()
