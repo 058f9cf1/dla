@@ -10,7 +10,7 @@ def create_matrix(centre, r_max):
 	box = centre * 2 + 1
 
 	matrix = numpy.zeros((box, box))
-	matrix[centre][centre] = 1
+	matrix[centre, centre] = 1
 	
 	y, x = numpy.ogrid[-centre:centre + 1, -centre:centre + 1]
 	matrix[x ** 2 + y ** 2 >= r_max ** 2] = -1
@@ -27,13 +27,11 @@ def spawn_particle(r_spawn, centre):
 
 
 def calculate_radii(r, r_spawn, r_kill, r_max):
-	if(r + 2 > r_spawn):
-		r_spawn = int(r) + 2
-		if(r_spawn > r_max):
-			r_spawn = r_max
-
+	if r + 1 > r_spawn and r_spawn < r_max:
+		r_spawn += 1
 		r_kill = r_spawn * 10
-		if(r_kill > r_max):
+
+		if r_kill > r_max:
 			r_kill = r_max
 
 	return r_spawn, r_kill
@@ -58,7 +56,7 @@ def set_colours(name, mass):
 
 def generate(r_max, p):
 	complete = False
-	r_spawn = 1
+	r_spawn = 2
 	r_kill = r_spawn + 1
 	mass = 1
 
@@ -70,20 +68,21 @@ def generate(r_max, p):
 		walking = True
 		x, y = spawn_particle(r_spawn, centre)
 		while walking:
-			r = numpy.sqrt((x - centre) ** 2 + (y - centre) ** 2)
-			if(r > r_kill):#If the particle has exited the circle
+			r = numpy.linalg.norm([x - centre, y - centre])
+			if r > r_kill: #If the particle has exited the circle
 				walking = False
-			elif(m[x + 1][y] >= 1 or m[x - 1][y] >= 1 or m[x][y + 1] >= 1 or m[x][y - 1] >= 1):#If particle is touching the growth
+
+			elif m[x + 1, y] >= 1 or m[x - 1, y] >= 1 or m[x, y + 1] >= 1 or m[x, y - 1] >= 1: #If particle is touching the growth
 				mass += 1
-				m[x][y] = mass
+				m[x, y] = mass
 				walking = False
 				r_spawn, r_kill = calculate_radii(r, r_spawn, r_kill, r_max)
 				print(f"Particle joined at ({x:>4}, {y:>4}), r = {r:<18}, r_spawn = {r_spawn}, r_kill = {r_kill}, mass = {mass}")
-				if(r + 1 > r_max):#If the growth has reached the edge of the circle
-					complete = True
-			else:#Walk
+				complete = r + 1 > r_max #If the growth has reached the edge of the circle
+
+			else: #Walk
 				step = 1
-				if(r > r_spawn):
+				if r > r_spawn:
 					step = int(r) - r_spawn + 1
 				x, y = [x, y] + numpy.random.choice([-step, 0, step], size=2)
 
