@@ -43,8 +43,9 @@ def set_colours(name, mass):
         new_colourmap = colourmap(numpy.arange(1, mass + 1))
     else:
         if not name == "default":
-            print("Colourmap not recognised, using default colourmap")
-        new_colourmap = []
+            print("Colourmap not recognised, "
+                  "using default colourmap... ", end='')
+            new_colourmap = []
         for i in range(mass):
             new_colourmap.append(numpy.array([0, 0, 0, 1]))
 
@@ -69,18 +70,25 @@ def generate(r_max, p):
         x, y = spawn_particle(r_spawn, centre)
         while walking:
             r = numpy.linalg.norm([x - centre, y - centre])
-            if r > r_kill:  # If the particle has exited the circle
+
+            # If the particle has exited the circle
+            if r > r_kill:
                 walking = False
 
-            elif m[x + 1, y] >= 1 or m[x - 1, y] >= 1 or m[x, y + 1] >= 1 or m[x, y - 1] >= 1:  # If particle is touching the growth
+            # If particle is touching the growth
+            elif (m[x + 1, y] >= 1 or m[x - 1, y] >= 1
+                  or m[x, y + 1] >= 1 or m[x, y - 1] >= 1):
                 mass += 1
                 m[x, y] = mass
                 walking = False
                 r_spawn, r_kill = calculate_radii(r, r_spawn, r_kill, r_max)
-                print(f"Particle joined at ({x:>4}, {y:>4}), r = {r:<18}, r_spawn = {r_spawn}, r_kill = {r_kill}, mass = {mass}")
-                complete = r + 1 > r_max  # If the growth has reached the edge of the circle
+                print(f"Particle joined at ({x:>4}, {y:>4}), r = {r:<18}, "
+                      f"r_spawn = {r_spawn}, r_kill = {r_kill}, mass = {mass}")
+                # If the growth has reached the edge of the circle
+                complete = r + 1 > r_max
 
-            else:  # Walk
+            # Walk
+            else:
                 step = 1
                 if r > r_spawn:
                     step = int(r) - r_spawn + 1
@@ -94,7 +102,7 @@ if __name__ == "__main__":
     padding = 5
     colourmap = "viridis"
 
-
+    # Run
     print(f"Generating cluster with radius = {radius} and padding = {padding}")
     cluster, mass = generate(radius, padding)
     print("Done generating!")
