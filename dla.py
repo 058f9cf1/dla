@@ -27,7 +27,7 @@ def spawn_particle(r_spawn, centre):
 
 
 def calculate_radii(r, r_spawn, r_kill, r_max):
-    if r + 1 > r_spawn and r_spawn < r_max:
+    if r + 2 > r_spawn and r_spawn < r_max:
         r_spawn += 1
         r_kill = r_spawn * 10
 
@@ -58,7 +58,7 @@ def set_colours(name, mass):
 def generate(r_max, p):
     complete = False
     r_spawn = 2
-    r_kill = r_spawn + 1
+    r_kill = r_spawn
     mass = 1
 
     centre = r_max + p
@@ -93,7 +93,16 @@ def generate(r_max, p):
                 step = 1
                 if r > r_spawn:
                     step = int(r) - r_spawn + 1
-                x, y = [x, y] + numpy.random.choice([-step, 0, step], size=2)
+
+                rand = numpy.random.random()
+                if rand < 0.25:
+                    y -= step  # Up
+                elif rand < 0.5:
+                    x -= step  # Left
+                elif rand < 0.75:
+                    y += step  # Down
+                else:
+                    x += step  # Right
 
     return m, mass
 
@@ -114,13 +123,13 @@ if __name__ == "__main__":
 
     print("Saving array data... ", end='')
     numpy.save(f"{path}.npy", cluster)
-    print("Done!")
+    print(f"Saved as {path}.npy!")
 
     print("Saving image... ", end='')
     plt.matshow(cluster, cmap=set_colours(colourmap, mass))
     plt.axis('off')
     plt.savefig(f"{path}.png", bbox_inches='tight', dpi=500)
-    print("Done!")
+    print(f"Saved as {path}.png!")
 
     print("Showing cluster")
     plt.show()
